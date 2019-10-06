@@ -335,7 +335,55 @@ $ sudo tcpdump -i ens8   # on VM2
 $ sudo tcpdump -i ens7   # on VM3
 ```
 
-## 5. Gracefully turn off the virtual machines (for rnl-virt only)
+## 5. Making these changes permanent
+
+The changes you made before will be lost once you perform a reboot of your machine. In order to make them permanent you have to edit the corresponding `/etc/network/interfaces`
+
+```
+## On VM1
+auto ens7
+iface ens7 inet static
+    address 192.168.0.100
+    netmask 255.255.255.0
+    gateway 192.168.0.10
+    dns-nameservers 8.8.8.8 8.8.4.4
+```
+
+```
+### On VM2
+auto ens7
+iface ens7 inet static
+    address 192.168.0.10
+    netmask 255.255.255.0
+    dns-nameservers 8.8.8.8 8.8.4.4
+
+auto ens8
+iface ens8 inet static
+    address 192.168.1.254
+    netmask 255.255.255.0
+    dns-nameservers 8.8.8.8 8.8.4.4
+
+auto ens9
+iface ens9 inet dhcp
+```
+
+```
+### On VM3
+auto ens7
+iface ens7 inet static
+    address 192.168.1.1
+    netmask 255.255.255.0
+    gateway 192.168.1.254
+    dns-nameservers 8.8.8.8 8.8.4.4
+```
+
+You should also enable IP forwarding permanently on VM2
+
+```bash
+$ sudo sysctl -w net.ipv4.ip_forward=1
+```
+
+## 6. Gracefully turn off the virtual machines (for rnl-virt only)
 
 To gracefully close the virtual machines which you deployed using the rnl-virt command, execute the following on VM1, VM2 and VM3:
 
