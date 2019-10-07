@@ -46,7 +46,7 @@ The easier way to connect the VM1 and VM2 in the same network is to do the follo
 
 Repeat for VM2 and VM3 but creating a second Network adapter in VM2 and calling the `Internal Network` sw-2.
 
-Finally, create a third Network adapter in VM2 that is `bridged` with your physical address. This interface will be used to access the internet.
+Finally, create a third Network adapter in VM2 that is `nat`-ed with your physical address. This interface will be used to access the internet.
 
 Proceed now to 2.
 
@@ -93,7 +93,7 @@ This will have created virtual switches sw-1 and sw-2 (again, these names are su
 
 ```bash
 $ rnl-virt vm create VM1 SEED19 sirs-1.qcow2 –-switch sw-1
-$ rnl-virt vm create VM2 SEED19 sirs-2.qcow2 –-switch sw-1 sw-2 --bridge
+$ rnl-virt vm create VM2 SEED19 sirs-2.qcow2 –-switch sw-1 sw-2 --nat
 $ rnl-virt vm create VM3 SEED19 sirs-3.qcow2 –-switch sw-2
 ```
 
