@@ -83,7 +83,7 @@ We have created the virtual hard disks; next we will create the virtual machine 
 
 ```bash
 $ rnl-virt switch create sw-1 --hub
-$ rnl-virt switch create sw-2 –-hub
+$ rnl-virt switch create sw-2 --hub
 ```
 
 The hub option means that the virtual frames are broadcast in the network. This is important whenever you want a machine in a network to be able to capture the traffic between two other machines of the network, e.g., suppose a VM4 connected to sw-1. VM4 would be able to capture the traffic between VM1 and VM2.
@@ -92,9 +92,9 @@ If we used normal switches rather than hubs, packets would not be broadcast but 
 This will have created virtual switches sw-1 and sw-2 (again, these names are suggestions). Now that both the differential disks and the switches exist, we must create the virtual machine instances, associating each one to its target disk file and switch:
 
 ```bash
-$ rnl-virt vm create VM1 SEED19 sirs-1.qcow2 –-switch sw-1
-$ rnl-virt vm create VM2 SEED19 sirs-2.qcow2 –-switch sw-1 sw-2 --nat
-$ rnl-virt vm create VM3 SEED19 sirs-3.qcow2 –-switch sw-2
+$ rnl-virt vm create VM1 SEED19 sirs-1.qcow2 --switch sw-1
+$ rnl-virt vm create VM2 SEED19 sirs-2.qcow2 --switch sw-1 sw-2 --nat
+$ rnl-virt vm create VM3 SEED19 sirs-3.qcow2 -switch sw-2
 ```
 
 Notice that VM2 was associated to both virtual switches: it shall be connected to both subnets and it will later on be configured as a gateway to allow communication between VM1 and VM3, and between VM1/VM3 and the internet.
@@ -296,10 +296,10 @@ you can observe that the packets go out to google.com but do not come back. Why?
 Use the iptables command (man iptables) in VM2 to correct this behaviour. NAT will do the source and destination mapping.
 
 ```bash
-$ sudo iptables –P FORWARD ACCEPT
-$ sudo iptables –F FORWARD
-$ sudo iptables –t nat -F
-$ sudo iptables –t nat –A POSTROUTING  –o ens9 –j MASQUERADE
+$ sudo iptables -P FORWARD ACCEPT
+$ sudo iptables -F FORWARD
+$ sudo iptables -t nat -F
+$ sudo iptables -t nat -A POSTROUTING  -o ens9 -j MASQUERADE
 ```
 
 Test again
@@ -321,7 +321,7 @@ $ sudo route del default    # on VM3
 
 ## 4. Monitor network traffic
 
-To monitor the network traffic, we may use VM2 (or another machine, e.g. a VM4, also connected to the network) to run tcpdump and capture all network traffic. Make sure you can detect ICMP packets originating at VM3 and with destination VM1 (using ping). Use tcpdump with options –X and –XX and identify the IP addresses, MAC addresses and protocol in a given packet.
+To monitor the network traffic, we may use VM2 (or another machine, e.g. a VM4, also connected to the network) to run tcpdump and capture all network traffic. Make sure you can detect ICMP packets originating at VM3 and with destination VM1 (using ping). Use tcpdump with options -X and -XX and identify the IP addresses, MAC addresses and protocol in a given packet.
 While still running /usr/sbin/tcpdump, open a telnet connection between VM1 and VM2 using user `seed` and password `dees`. Verify that you can capture both the username and password with tcpdump.
 
 **You have successfully eavesdropped communications… But what is the difference between executing telnet from VM1 to VM3 with and without NAT? Use tcpdump to analyse the output and compare the differences.**
