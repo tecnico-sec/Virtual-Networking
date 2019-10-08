@@ -86,7 +86,7 @@ $ rnl-virt switch create sw-1 --hub
 $ rnl-virt switch create sw-2 –-hub
 ```
 
-The hub option means that the virtual frames are broadcast in the network. This is important whenever you want a machine in a network to be able to capture the traffic between two other machines of the network. Eg, suppose a VM4 connected to sw-1. VM4 would be able to capture the traffic between VM1 and VM2.
+The hub option means that the virtual frames are broadcast in the network. This is important whenever you want a machine in a network to be able to capture the traffic between two other machines of the network, e.g., suppose a VM4 connected to sw-1. VM4 would be able to capture the traffic between VM1 and VM2.
 If we used normal switches rather than hubs, packets would not be broadcast but rather sent only to their specific destination.
 
 This will have created virtual switches sw-1 and sw-2 (again, these names are suggestions). Now that both the differential disks and the switches exist, we must create the virtual machine instances, associating each one to its target disk file and switch:
@@ -121,7 +121,7 @@ $ rnl-virt vm open VM3
 
 If you are asked to login, do it with user `seed` and password `dees` on each virtual machine.
 
-### Some useful shortcuts are
+### 1.2.2 Useful shortcuts
 
 ```bash
 * CTRL+ALT     – release mouse.
@@ -129,7 +129,7 @@ If you are asked to login, do it with user `seed` and password `dees` on each vi
 * CTRL+ALT+SHIFT+2/1 – open/close the QEMU console.
 ```
 
-To change the display resolution in graphics mode, use the application xLucas and follow the instructions. To shut down the virtual machine, open a terminal/shell inside the virtual machine and execute the following command:
+To shut down the virtual machine, open a terminal/shell inside the virtual machine and execute the following command:
 
 ```bash
 $ sudo /sbin/poweroff
