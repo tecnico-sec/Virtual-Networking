@@ -57,7 +57,8 @@ Proceed now to 2.
 
 ## 1.2 Setup the lab for rnl-virt
 
-This guide describes how to use the RNL computers and rnl-virt, the RNL virtualization system. The tool’s documentation is available in [here](https://rnl.tecnico.ulisboa.pt/servicos/virtualizacao/) and should be referenced for additional command details.
+This guide describes how to use the RNL computers and rnl-virt, the RNL virtualization system. 
+The tool’s documentation is available in [here](https://rnl.tecnico.ulisboa.pt/servicos/virtualizacao/) and should be referenced for additional command details.
 rnl‑virt relies on libvirt that is based on QEMU. 
 Libvirt is a special daemon used to create, launch and shutdown virtual machines. 
 The physical machine is called the Host whereas the virtual machines are called Guests. 
@@ -180,9 +181,11 @@ The values ending with 100 and 10 are arbitrary, they could be any (different) v
 Follow the configuration procedure below for both VM1 and VM2.
 
 We are assuming that VM1 has an interface `ens7`(connected to sw-1) and VM2 has interfaces `ens7` (connected to sw-1), `ens8` (connected to sw-2), and `ens9` (connected to the internet). 
+These `en...` values are the network interface names and are automatically assigned by the operating system following a [device naming convention](https://en.wikipedia.org/wiki/Consistent_Network_Device_Naming).
+
 _How do you know which interface is connected to sw-1 and which one is connected to sw-2? 
 Look at their MAC Addresses. 
-Runnng `ip a` shows the MAC address of each interface and you can compare with those of VirtualBox._
+Running `ip a` shows the MAC address of each interface and you can compare with those of VirtualBox._
 
 First, assign an IP address to VM1 on interface ens7.
 
@@ -464,7 +467,7 @@ __You may now want to copy the files from /var/tmp to your home folder. You are 
 
 Adapted by: Nuno Sabino
 
-Revised by: Pedro Adão
+Revised by: Pedro Adão, Miguel Pardal
 
 ----
 
