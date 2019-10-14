@@ -33,14 +33,14 @@ If you decide to clone the existing machine you should
 
 Repeat this process twice and lets call the original machine VM1, and the new ones VM2 and VM3.
 
-The intended topology of our network is shown in Figure 2 with VM2 also connected to the internet (with an IP address that is obtain via DHCP).
+The intended topology of our network is shown in Figure 2 with VM2 also connected to the Internet (with an IP address that is obtain via DHCP).
 
 <img src="./figure2.png" alt="alt text" width="200">
 
 *Figure 2. Intended network layout. 
 VM1 and VM2 are connected in a virtual network via sw-1. 
 VM2 and VM3 are connected in another virtual network via sw-2. 
-VM2 will operate as a gateway between the two subnets, and as a gateway to the intenet.*
+VM2 will operate as a gateway between the two subnets, and as a gateway to the Internet.*
 
 The easier way to connect the VM1 and VM2 in the same network is to do the following in the VirtualBox interface with the VM turned off:
 
@@ -51,7 +51,7 @@ The easier way to connect the VM1 and VM2 in the same network is to do the follo
 Repeat for VM2 and VM3 but creating a second Network adapter in VM2 and calling the `Internal Network` sw-2.
 
 Finally, create a third Network adapter in VM2 that is `nat`-ed with your physical address. 
-This interface will be used to access the internet.
+This interface will be used to access the Internet.
 
 Proceed now to 2.
 
