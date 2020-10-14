@@ -284,7 +284,7 @@ This will allow VM1 to communicate with machines outside its subnet 192.168.0.X.
 Activate IP forwarding with:
 
 ```bash
-$ sudo sysctl net.ipv4.ip_forward=1
+$ sudo sysctl net.ipv4.ip_forward=1   # on VM2
 ```
 
 Confirm that the flag value was updated to 1:
@@ -299,14 +299,14 @@ Now set VM2 as the default gateway for VM1 by doing this:
 $ sudo ip route add default via 192.168.0.10   # on VM1
 ```
 
-Try to ping now VM3 from VM1.
+Try again to ping VM3 from VM1.
 
 ```bash
 $ ping 192.168.1.1       # on VM1
 ```
 
 Does it work? 
-Do you know where the problem is? 
+Can you identify where the problem is? 
 Run the commands below and see if you understand what is happening
 
 ```bash
@@ -316,7 +316,7 @@ $ sudo tcpdump -i ens8   # on VM2
 $ sudo tcpdump -i ens7   # on VM3
 ```
 
-What happens when you ping VM1 from VM3? Why is the answer different?
+What happens now when you ping VM1 from VM3? Why is the answer different?
 
 Add now VM2 also as the default gateway for VM3. 
 This would allow VM3 to talk to machines outside its subnet 192.168.1.X.
@@ -325,12 +325,13 @@ This would allow VM3 to talk to machines outside its subnet 192.168.1.X.
 $ sudo ip route add default via 192.168.1.254    # on VM3
 ```
 
-Can you now ping VM3 from VM1? Why? And ping VM1 from VM3? 
-Why?
+- Can you now ping VM3 from VM1? Why? 
+- And can you ping VM1 from VM3? Why?
 
 ### 2.4 Configure NAT (Network Address Translation)
 
 Try to ping google.com from the 3 machines? Why can't you do it from VM1 nor VM3? 
+
 The issue is that VM2 is acting as the gateway to the internet for both VM1 and VM3 but is not NATing the packets. 
 If you run
 
@@ -342,14 +343,14 @@ $ sudo tcpdump -i ens9 -p icmp    # on VM2 (interface to the internet)
 you can observe that the packets go out to google.com but do not come back. 
 Why? 
 Because google.com does not know where 192.168.0.100 is and so cannot send the packets back.
-Use the iptables command (man iptables) in VM2 to correct this behaviour. 
+You can use the iptables command (man iptables) in VM2 to correct this behaviour. 
 NAT will do the source and destination mapping.
 
 ```bash
-$ sudo iptables -P FORWARD ACCEPT
-$ sudo iptables -F FORWARD
-$ sudo iptables -t nat -F
-$ sudo iptables -t nat -A POSTROUTING  -o ens9 -j MASQUERADE
+$ sudo iptables -P FORWARD ACCEPT    # Defines default policy for FORWARD
+$ sudo iptables -F FORWARD           # Flushes all the rules from chain FORWARD
+$ sudo iptables -t nat -F            # Flushes all the rules from table NAT
+$ sudo iptables -t nat -A POSTROUTING  -o ens9 -j MASQUERADE    # Creates a source NAT on interface ens9
 ```
 
 Test again
@@ -359,19 +360,19 @@ $ ping 8.8.8.8                    # on VM1
 $ sudo tcpdump -i ens9 -p icmp    # on VM2 (interface to the internet)
 ```
 
-What do you observe? Why does it work now? 
-What is the source address of the packet now? 
-Compare this source address to the previous case.
+- What do you observe? Why does it work now? 
+- What is the source address of the packet now? Compare this source address to the previous case.
 
-Lets now go back to 3.3 and to the scenario where VM2 is the default gateway for VM1 but where __VM3 has no default gateway__. 
-Could you solve this with a NAT instead of adding VM2 as the default gateway for VM3? 
-Why?
+Lets now go back to 2.3 to the scenario where VM2 is the default gateway for VM1 but where __VM3 has no default gateway__. 
 
 To remove the default gateway run in VM3
 
 ```bash
 $ sudo route del default    # on VM3
 ```
+
+- As seen before you cannot ping VM3 from VM1. Could you solve this issue with a NAT (in interface ens8 of VM2) instead of adding VM2 as the default gateway for VM3? Why?
+- And can you ping VM1 from VM3? Why?
 
 ## 3. Monitor network traffic
 
@@ -380,7 +381,7 @@ Make sure you can detect ICMP packets originating at VM3 and with destination VM
 While still running /usr/sbin/tcpdump, open a telnet connection between VM1 and VM2 using user `seed` and password `dees`. 
 Verify that you can capture both the username and password with tcpdump.
 
-**You have successfully eavesdropped communications… But what is the difference between executing telnet from VM1 to VM3 with and without NAT? Use tcpdump to analyse the output and compare the differences.**
+**You have successfully eavesdropped communications… But what is the difference between executing telnet from VM1 to VM3 with and without NAT (in interface ens8 of VM2)? Use tcpdump to analyse the output and compare the differences.**
 
 You might want to run
 
@@ -434,10 +435,10 @@ iface ens7 inet static
     dns-nameservers 8.8.8.8 8.8.4.4
 ```
 
-You should also enable IP forwarding permanently on VM2
+You should also enable IP forwarding permanently on VM2. For that you need to edit `/etc/sysctl.conf` and uncomment the following line
 
 ```bash
-$ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward=1
 ```
 
 ## 5. Gracefully turn off the virtual machines (for rnl-virt only)
