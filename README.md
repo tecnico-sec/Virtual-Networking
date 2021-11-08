@@ -180,26 +180,26 @@ The values ending with 100 and 10 are arbitrary, they could be any (different) v
 
 Follow the configuration procedure below for both VM1 and VM2.
 
-We are assuming that VM1 has an interface `ens7`(connected to sw-1) and VM2 has interfaces `ens7` (connected to sw-1), `ens8` (connected to sw-2), and `ens9` (connected to the internet). 
-These `en...` values are the network interface names and are automatically assigned by the operating system following a [device naming convention](https://en.wikipedia.org/wiki/Consistent_Network_Device_Naming).
+We are assuming that VM1 has an interface `enp0s3`(connected to sw-1) and VM2 has interfaces `enp0s3` (connected to sw-1), `enp0s8` (connected to sw-2), and `enp0s9` (connected to the internet). 
+These `en...` values are the network interface names and are automatically assigned by the operating system following a [device naming convention](https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/).
 
 _How do you know which interface is connected to sw-1 and which one is connected to sw-2? 
 Look at their MAC Addresses. 
 Running `ip a` shows the MAC address of each interface and you can compare with those of VirtualBox._
 
-First, assign an IP address to VM1 on interface ens7.
+First, assign an IP address to VM1 on interface enp0s3.
 
 ```bash
-$ sudo ifconfig ens7 192.168.0.100/24 up
+$ sudo ifconfig enp0s3 192.168.0.100/24 up
 ```
 
 And do the same for VM2 (again, note that the interface name may be different)
 
 ```bash
-$ sudo ifconfig ens7 192.168.0.10/24 up
+$ sudo ifconfig enp0s3 192.168.0.10/24 up
 ```
 
-Now running `ifconfig` on the VMs should show the respective assigned IP addresses on interface ens7. 
+Now running `ifconfig` on the VMs should show the respective assigned IP addresses on interface enp0s3. 
 If not, try to reload the network interfaces of both VM1 and VM2:
 
 ```bash
@@ -238,8 +238,8 @@ Again, 254 and 1 are arbitrary values between 1 and 254.
 
 *Figure 4 Expected layout of the subnet in which VM2 and VM3 will communicate using sw-2.*
 
-In VM3, assign the IP address 192.168.1.1 to interface ens7.
-In VM2 assign the IP address 192.168.1.254 to interface ens8 (recall that interface ens7 of VM2 is connected to sw-1 and interface ens8 of VM2 is connected to sw-2).
+In VM3, assign the IP address 192.168.1.1 to interface enp0s3.
+In VM2 assign the IP address 192.168.1.254 to interface enp0s8 (recall that interface enp0s3 of VM2 is connected to sw-1 and interface enp0s8 of VM2 is connected to sw-2).
 The command `ifconfig` should define default routes for those networks. 
 You can check it with command `route`.
 To finish creating this network, reload the network interfaces of both VM2 and VM3:
@@ -310,10 +310,10 @@ Can you identify where the problem is?
 Run the commands below and see if you understand what is happening
 
 ```bash
-$ sudo tcpdump -i ens7   # on VM1
-$ sudo tcpdump -i ens7   # on VM2
-$ sudo tcpdump -i ens8   # on VM2
-$ sudo tcpdump -i ens7   # on VM3
+$ sudo tcpdump -i enp0s3   # on VM1
+$ sudo tcpdump -i enp0s3   # on VM2
+$ sudo tcpdump -i enp0s8   # on VM2
+$ sudo tcpdump -i enp0s8   # on VM3
 ```
 
 What happens now when you ping VM1 from VM3? Why is the answer different?
@@ -337,7 +337,7 @@ If you run
 
 ```bash
 $ ping 8.8.8.8                    # on VM1
-$ sudo tcpdump -i ens9 -p icmp    # on VM2 (interface to the internet)
+$ sudo tcpdump -i enp0s9 -p icmp    # on VM2 (interface to the internet)
 ```
 
 you can observe that the packets go out to google.com but do not come back. 
@@ -350,14 +350,14 @@ NAT will do the source and destination mapping.
 $ sudo iptables -P FORWARD ACCEPT    # Defines default policy for FORWARD
 $ sudo iptables -F FORWARD           # Flushes all the rules from chain FORWARD
 $ sudo iptables -t nat -F            # Flushes all the rules from table NAT
-$ sudo iptables -t nat -A POSTROUTING  -o ens9 -j MASQUERADE    # Creates a source NAT on interface ens9
+$ sudo iptables -t nat -A POSTROUTING  -o enp0s9 -j MASQUERADE    # Creates a source NAT on interface enp0s9
 ```
 
 Test again
 
 ```bash
 $ ping 8.8.8.8                    # on VM1
-$ sudo tcpdump -i ens9 -p icmp    # on VM2 (interface to the internet)
+$ sudo tcpdump -i enp0s9 -p icmp    # on VM2 (interface to the internet)
 ```
 
 - What do you observe? Why does it work now? 
@@ -371,7 +371,7 @@ To remove the default gateway run in VM3
 $ sudo route del default    # on VM3
 ```
 
-- As seen before you cannot ping VM3 from VM1. Could you solve this issue with a NAT (in interface ens8 of VM2) instead of adding VM2 as the default gateway for VM3? Why?
+- As seen before you cannot ping VM3 from VM1. Could you solve this issue with a NAT (in interface enp0s8 of VM2) instead of adding VM2 as the default gateway for VM3? Why?
 - And can you ping VM1 from VM3? Why?
 
 ## 3. Monitor network traffic
@@ -381,15 +381,15 @@ Make sure you can detect ICMP packets originating at VM3 and with destination VM
 While still running /usr/sbin/tcpdump, open a telnet connection between VM1 and VM2 using user `seed` and password `dees`. 
 Verify that you can capture both the username and password with tcpdump.
 
-**You have successfully eavesdropped communications… But what is the difference between executing telnet from VM1 to VM3 with and without NAT (in interface ens8 of VM2)? Use tcpdump to analyse the output and compare the differences.**
+**You have successfully eavesdropped communications… But what is the difference between executing telnet from VM1 to VM3 with and without NAT (in interface enp0s8 of VM2)? Use tcpdump to analyse the output and compare the differences.**
 
 You might want to run
 
 ```bash
-$ sudo tcpdump -i ens7   # on VM1
-$ sudo tcpdump -i ens7   # on VM2
-$ sudo tcpdump -i ens8   # on VM2
-$ sudo tcpdump -i ens7   # on VM3
+$ sudo tcpdump -i enp0s3   # on VM1
+$ sudo tcpdump -i enp0s3   # on VM2
+$ sudo tcpdump -i enp0s8   # on VM2
+$ sudo tcpdump -i enp0s3   # on VM3
 ```
 
 ## 4. Making these changes permanent
@@ -399,8 +399,8 @@ In order to make them permanent you have to edit the corresponding `/etc/network
 
 ```
 ## On VM1
-auto ens7
-iface ens7 inet static
+auto enp0s3
+iface enp0s3 inet static
     address 192.168.0.100
     netmask 255.255.255.0
     gateway 192.168.0.10
@@ -409,26 +409,26 @@ iface ens7 inet static
 
 ```
 ### On VM2
-auto ens7
-iface ens7 inet static
+auto enp0s3
+iface enp0s3 inet static
     address 192.168.0.10
     netmask 255.255.255.0
     dns-nameservers 8.8.8.8 8.8.4.4
 
-auto ens8
-iface ens8 inet static
+auto enp0s8
+iface enp0s8 inet static
     address 192.168.1.254
     netmask 255.255.255.0
     dns-nameservers 8.8.8.8 8.8.4.4
 
-auto ens9
-iface ens9 inet dhcp
+auto enp0s9
+iface enp0s9 inet dhcp
 ```
 
 ```
 ### On VM3
-auto ens7
-iface ens7 inet static
+auto enp0s3
+iface enp0s3 inet static
     address 192.168.1.1
     netmask 255.255.255.0
     gateway 192.168.1.254
