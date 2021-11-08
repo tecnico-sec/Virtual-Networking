@@ -389,7 +389,7 @@ You might want to run
 $ sudo tcpdump -i enp0s3   # on VM1
 $ sudo tcpdump -i enp0s3   # on VM2
 $ sudo tcpdump -i enp0s8   # on VM2
-$ sudo tcpdump -i enp0s3   # on VM3
+$ sudo tcpdump -i enp0s8   # on VM3
 ```
 
 ## 4. Making these changes permanent
