@@ -46,7 +46,7 @@ The easier way to connect the VM1 and VM2 in the same network is to do the follo
 
 - Select the VM Settings/Network/Adapter1
 - Attach to `Internal Network`. Call it sw-1
-- Promisuous Mode: Allow VMs
+- Promiscuous Mode: Allow VMs
 
 Repeat for VM2 and VM3 but creating a second Network adapter in VM2 and calling the `Internal Network` sw-2.
 
