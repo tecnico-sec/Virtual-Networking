@@ -427,8 +427,8 @@ iface enp0s9 inet dhcp
 
 ```
 ### On VM3
-auto enp0s3
-iface enp0s3 inet static
+auto enp0s8
+iface enp0s8 inet static
     address 192.168.1.1
     netmask 255.255.255.0
     gateway 192.168.1.254
