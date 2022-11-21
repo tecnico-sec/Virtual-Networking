@@ -203,7 +203,7 @@ Now running `ifconfig` on the VMs should show the respective assigned IP address
 If not, try to reload the network interfaces of both VM1 and VM2:
 
 ```bash
-$ sudo /etc/init.d/networking force-reload
+$ sudo /etc/init.d/network-manager force-reload
 ```
 
 To check that the configuration is correct:
@@ -245,7 +245,7 @@ You can check it with command `route`.
 To finish creating this network, reload the network interfaces of both VM2 and VM3:
 
 ```bash
-$ sudo /etc/init.d/networking force-reload
+$ sudo /etc/init.d/network-manager force-reload
 ```
 
 To check that the configuration is correct:
