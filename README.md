@@ -450,6 +450,12 @@ network:
           nameservers:
               addresses: [8.8.8.8, 8.8.4.4]
 ```
+After editing the file, in each machine run:
+
+```bash
+$ sudo netplan try
+$ sudo netplan apply
+```
 
 You should also enable IP forwarding permanently on VM2. For that you need to edit `/etc/sysctl.conf` and uncomment the following line
 
