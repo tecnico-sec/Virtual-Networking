@@ -238,8 +238,8 @@ Again, 254 and 1 are arbitrary values between 1 and 254.
 
 *Figure 4 Expected layout of the subnet in which VM2 and VM3 will communicate using sw-2.*
 
-In VM3, assign the IP address 192.168.1.1 to interface enp0s8.
-In VM2 assign the IP address 192.168.1.254 to interface enp0s8 (recall that interface enp0s3 of VM2 is connected to sw-1 and interface enp0s8 of VM2 is connected to sw-2).
+In VM3, assign the IP address 192.168.1.1 to interface `enp0s3`.
+In VM2 assign the IP address 192.168.1.254 to interface `enp0s8` (recall that interface `enp0s3` of VM2 is connected to sw-1 and interface `enp0s8` of VM2 is connected to sw-2).
 The command `ifconfig` should define default routes for those networks. 
 You can check it with command `route`.
 To finish creating this network, reload the network interfaces of both VM2 and VM3:
@@ -395,44 +395,56 @@ $ sudo tcpdump -i enp0s8   # on VM3
 ## 4. Making these changes permanent
 
 The changes you made before will be lost once you perform a reboot of your machine. 
-In order to make them permanent you have to edit the corresponding `/etc/network/interfaces`
+In order to make them permanent you have to edit the corresponding `/etc/netplan/01-network-manager-all.yaml`
 
 ```
 ## On VM1
-auto enp0s3
-iface enp0s3 inet static
-    address 192.168.0.100
-    netmask 255.255.255.0
-    gateway 192.168.0.10
-    dns-nameservers 8.8.8.8 8.8.4.4
+network:
+    [...]
+    ethernets:
+        enp0s3:
+            addresses:
+                - 192.168.0.100/24
+            routes:
+                - to: 0.0.0.0/0
+                  via: 192.168.0.10
+            nameservers:
+                addresses: [8.8.8.8, 8.8.4.4]
+
 ```
 
 ```
 ### On VM2
-auto enp0s3
-iface enp0s3 inet static
-    address 192.168.0.10
-    netmask 255.255.255.0
-    dns-nameservers 8.8.8.8 8.8.4.4
-
-auto enp0s8
-iface enp0s8 inet static
-    address 192.168.1.254
-    netmask 255.255.255.0
-    dns-nameservers 8.8.8.8 8.8.4.4
-
-auto enp0s9
-iface enp0s9 inet dhcp
+network:
+    [...]
+    ethernets:
+        enp0s3:
+            addresses:
+                - 192.168.0.10/24
+            nameservers:
+                addresses: [8.8.8.8, 8.8.4.4]
+        enp0s8:
+            addresses:
+                - 192.168.1.254/24
+            nameservers:
+                addresses: [8.8.8.8, 8.8.4.4]
+        enp0s9:
+            dhcp4: true
 ```
 
 ```
 ### On VM3
-auto enp0s3
-iface enp0s3 inet static
-    address 192.168.1.1
-    netmask 255.255.255.0
-    gateway 192.168.1.254
-    dns-nameservers 8.8.8.8 8.8.4.4
+network:
+    [...]
+    ethernets:
+        enp0s3:
+            addresses:
+                - 192.168.1.1/24
+            routes:
+                - to: 0.0.0.0/0
+                  via: 192.168.1.254
+            nameservers:
+                addresses: [8.8.8.8, 8.8.4.4]
 ```
 
 You should also enable IP forwarding permanently on VM2. For that you need to edit `/etc/sysctl.conf` and uncomment the following line
