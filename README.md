@@ -238,7 +238,7 @@ Again, 254 and 1 are arbitrary values between 1 and 254.
 
 *Figure 4 Expected layout of the subnet in which VM2 and VM3 will communicate using sw-2.*
 
-In VM3, assign the IP address 192.168.1.1 to interface `enp0s3`.
+In VM3, assign the IP address 192.168.1.1 to interface `enp0s3` or `enp0s8`, whichever you have enabled in the VirtualBox VM settings.
 In VM2 assign the IP address 192.168.1.254 to interface `enp0s8` (recall that interface `enp0s3` of VM2 is connected to sw-1 and interface `enp0s8` of VM2 is connected to sw-2).
 The command `ifconfig` should define default routes for those networks. 
 You can check it with command `route`.
@@ -437,7 +437,7 @@ network:
 network:
     [...]
     ethernets:
-        enp0s3:
+        enp0s3:    # or enp0s8, if you have it enabled instead
             addresses:
                 - 192.168.1.1/24
             routes:
