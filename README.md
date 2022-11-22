@@ -400,51 +400,55 @@ In order to make them permanent you have to edit the corresponding `/etc/netplan
 ```
 ## On VM1
 network:
-    [...]
-    ethernets:
-        enp0s3:
-            addresses:
-                - 192.168.0.100/24
-            routes:
-                - to: 0.0.0.0/0
-                  via: 192.168.0.10
-            nameservers:
-                addresses: [8.8.8.8, 8.8.4.4]
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+      enp0s3:
+          addresses:
+              - 192.168.0.100/24
+          routes:
+              - to: 0.0.0.0/0
+                via: 192.168.0.10
+          nameservers:
+              addresses: [8.8.8.8, 8.8.4.4]
 
 ```
 
 ```
 ### On VM2
 network:
-    [...]
-    ethernets:
-        enp0s3:
-            addresses:
-                - 192.168.0.10/24
-            nameservers:
-                addresses: [8.8.8.8, 8.8.4.4]
-        enp0s8:
-            addresses:
-                - 192.168.1.254/24
-            nameservers:
-                addresses: [8.8.8.8, 8.8.4.4]
-        enp0s9:
-            dhcp4: true
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+      enp0s3:
+          addresses:
+              - 192.168.0.10/24
+          nameservers:
+              addresses: [8.8.8.8, 8.8.4.4]
+      enp0s8:
+          addresses:
+              - 192.168.1.254/24
+          nameservers:
+              addresses: [8.8.8.8, 8.8.4.4]
+      enp0s9:
+          dhcp4: true
+
 ```
 
 ```
 ### On VM3
 network:
-    [...]
-    ethernets:
-        enp0s3:    # or enp0s8, if you have it enabled instead
-            addresses:
-                - 192.168.1.1/24
-            routes:
-                - to: 0.0.0.0/0
-                  via: 192.168.1.254
-            nameservers:
-                addresses: [8.8.8.8, 8.8.4.4]
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+      enp0s3:    # or enp0s8, if you have it enabled instead
+          addresses:
+              - 192.168.1.1/24
+          routes:
+              - to: 0.0.0.0/0
+                via: 192.168.1.254
+          nameservers:
+              addresses: [8.8.8.8, 8.8.4.4]
 ```
 
 You should also enable IP forwarding permanently on VM2. For that you need to edit `/etc/sysctl.conf` and uncomment the following line
