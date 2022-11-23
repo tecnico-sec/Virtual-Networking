@@ -293,6 +293,13 @@ Confirm that the flag value was updated to 1:
 $ /sbin/sysctl net.ipv4.conf.all.forwarding
 ```
 
+Also, setup forwarding rules in VM2:
+
+```bash
+$ sudo iptables -P FORWARD ACCEPT    # Defines default policy for FORWARD
+$ sudo iptables -F FORWARD           # Flushes all the rules from chain FORWARD
+```
+
 Now set VM2 as the default gateway for VM1 by doing this:
 
 ```bash
@@ -347,8 +354,6 @@ You can use the iptables command (man iptables) in VM2 to correct this behaviour
 NAT will do the source and destination mapping.
 
 ```bash
-$ sudo iptables -P FORWARD ACCEPT    # Defines default policy for FORWARD
-$ sudo iptables -F FORWARD           # Flushes all the rules from chain FORWARD
 $ sudo iptables -t nat -F            # Flushes all the rules from table NAT
 $ sudo iptables -t nat -A POSTROUTING  -o enp0s9 -j MASQUERADE    # Creates a source NAT on interface enp0s9
 ```
