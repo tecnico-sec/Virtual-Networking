@@ -468,6 +468,19 @@ You should also enable IP forwarding permanently on VM2. For that you need to ed
 net.ipv4.ip_forward=1
 ```
 
+To make the iptables rules persistent, in VM2 install (select "yes" to save the current rules):
+
+```bash
+$ sudo apt install iptables-persistent
+```
+To save the current rules again, do:
+```bash
+# FOR IPv4
+$ sudo iptables-save > /etc/iptables/rules.v4
+# FOR IPv6
+$ sudo ip6tables-save > /etc/iptables/rules.v6
+```
+
 ## 5. Gracefully turn off the virtual machines (for rnl-virt only)
 
 To gracefully close the virtual machines which you deployed using the rnl-virt command, execute the following on VM1, VM2 and VM3:
