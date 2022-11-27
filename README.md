@@ -504,12 +504,6 @@ After all the virtual machines have stopped, if their windows are still open on 
 
 __You may now want to copy the files from /var/tmp to your home folder. You are going to need them for the next lab.__
 
-**Acknowledgments**
-
-Adapted by: Nuno Sabino
-
-Revised by: Pedro Adão, Miguel Pardal
-
 ----
 
 [SIRS Faculty](mailto:meic-sirs@disciplinas.tecnico.ulisboa.pt)
