@@ -436,7 +436,10 @@ network:
           nameservers:
               addresses: [8.8.8.8, 8.8.4.4]
       enp0s9:
-          dhcp4: true
+          dhcp4: yes
+          nameservers:
+            addresses: [8.8.8.8, 8.8.4.4]
+            
 
 ```
 
