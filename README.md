@@ -479,9 +479,9 @@ $ sudo apt install iptables-persistent
 To save the current rules again, do:
 ```bash
 # FOR IPv4
-$ sudo iptables-save > /etc/iptables/rules.v4
+$ sudo sh -c 'iptables-save > /etc/iptables/rules.v4'
 # FOR IPv6
-$ sudo ip6tables-save > /etc/iptables/rules.v6
+$ sudo sh -c 'ip6tables-save > /etc/iptables/rules.v6'
 ```
 
 ## 5. Gracefully turn off the virtual machines (for rnl-virt only)
