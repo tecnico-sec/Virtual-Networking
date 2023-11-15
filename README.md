@@ -481,28 +481,32 @@ On VM1:
 ```plaintext
 source /etc/network/interfaces.d/*
 
-# The loopback network interface
-auto lo eth0                    # sw-1 interface
+# The loopback network interface and sw-1 interface
+auto lo eth0                    
 iface lo inet loopback
 
-iface eth0 inet static          # sw-1 interface
+# sw-1 interface
+iface eth0 inet static          
         address 192.168.0.100
         netmask 255.255.255.0
+        gateway 192.168.0.10
 ```
 
 On VM2:
 ```plaintext
 source /etc/network/interfaces.d/*
 
-# The loopback network interface
-auto lo eth0 eth1               # sw-1 and sw-2 interfaces
+# The loopback network interface, sw-1 interface and sw-2 interface
+auto lo eth0 eth1               
 iface lo inet loopback
 
-iface eth0 inet static          # sw-1 interface
+# sw-1 interface
+iface eth0 inet static         
         address 192.168.0.10
         netmask 255.255.255.0
 
-iface eth1 inet static          # sw-2 interface
+# sw-2 interface
+iface eth1 inet static          
         address 192.168.1.254
         netmask 255.255.255.0
 
@@ -512,19 +516,15 @@ On VM3:
 ```plaintext
 source /etc/network/interfaces.d/*
 
-# The loopback network interface
-auto lo eth0                    # sw-2 interface
+# The loopback network interface and sw-2 interface
+auto lo eth0                    
 iface lo inet loopback
 
-iface eth0 inet static          # sw-2 interface
+# sw-2 interface
+iface eth0 inet static          
         address 192.168.1.1
         netmask 255.255.255.0
-```
-
-After editing the file, in each machine run:
-
-```bash
-$ sudo /etc/init.d/networking restart
+        gateway 192.168.1.254
 ```
 
 You should also enable IP forwarding permanently on VM2. For that you need to edit `/etc/sysctl.conf` and uncomment the following line
