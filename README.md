@@ -31,7 +31,7 @@ If you decide to clone the existing machine you should
 - MAC Adress Policy: Generate new MAC addresses for all network adapters
 - Select `Linked Clone`
 
-Repeat this process twice and lets call the original machine VM1, and the new ones VM2 and VM3.
+Repeat this process twice and let's call the original machine VM1, and the new ones VM2 and VM3.
 
 The intended topology of our network is shown in Figure 2 with VM2 also connected to the Internet (with an IP address that is obtain via DHCP).
 
@@ -203,7 +203,7 @@ Now running `ifconfig` on the VMs should show the respective assigned IP address
 If not, try to reload the network interfaces of both VM1 and VM2:
 
 ```bash
-$ sudo /etc/init.d/network-manager force-reload
+$ sudo systemctl restart NetworkManager
 ```
 
 To check that the configuration is correct:
@@ -245,7 +245,7 @@ You can check it with command `route`.
 To finish creating this network, reload the network interfaces of both VM2 and VM3:
 
 ```bash
-$ sudo /etc/init.d/network-manager force-reload
+$ sudo systemctl restart NetworkManager
 ```
 
 To check that the configuration is correct:
