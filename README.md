@@ -9,22 +9,28 @@ Instituto Superior Técnico, Universidade de Lisboa
 - Implement and test a virtual computer network.
 - Perform a simple TCP/IP packet analysis.
 
-## 1. VirtualBox vs rnl-virt
+## 1. VirtualBox/VMWare Fusion vs rnl-virt
 
-The setup of the machines for this lab is different depending on the usage of VirtualBox on your one machine, or the system rnl-virt of RNL. 
+The setup of the machines for this lab is different depending on the usage of VirtualBox or VMWare on your machine, or the usage of RNL's rnl-virt system. 
 Follow section 1.1 or 1.2 accordingly.
 
-## 1.1 Setup the lab for VirtualBox
-
-To setup our lab environment to be used with VirtualBox, you need to have 3 instances of your VMs. You can follow the instructions in [here](https://github.com/tecnico-sec/Setup) to install 2 new machines from scratch, or you can clone the one you have been using so far.
-
-<img src="./figure1.png" alt="alt text" width="400">
+<p align="center">
+    <img src="./figure1.png" alt="alt text" width="400" >
+</p>
 
 *Figure 1. In this laboratory assignment, you will need to create three virtual machines, which will be used to explore communication inside virtual networks and to test packet forwarding.*
 
-## 1.1.1 Create the virtual networks and machines (Virtualbox)
+## 1.1. Setup the lab for VirtualBox or VMWare Fusion
+To set up our lab environment to be used with VirtualBox or VMWare Fusion, you need to have 3 instances of your VMs. You can find the instructions to create them in the [setup lab-guide](https://github.com/tecnico-sec/Setup/blob/master/kali.org_VirtualBox.pdf).
+* Use the instructions for VirtualBox if you are on Windows, Linux or macOS (Intel-based);
+* Use the instructions for VMWare Fusion if you are on macOS (Apple Silicon);
 
-If you decide to clone the existing machine you should
+You can either install 2 new machines from scratch, or you can clone the existing machine (VM1). Section 1.1.1 overviews how to do this in VirtualBox, and section 1.1.2 shows the same for VMWare Fusion.
+
+## 1.1.1. Cloning virtual machines
+### 1.1.1.1. VirtualBox
+
+If you decide to clone the existing machine you should:
 
 - Click `Clone`
 - Select the name you want to give to the new machine
@@ -33,29 +39,82 @@ If you decide to clone the existing machine you should
 
 Repeat this process twice and let's call the original machine VM1, and the new ones VM2 and VM3.
 
-The intended topology of our network is shown in Figure 2 with VM2 also connected to the Internet (with an IP address that is obtain via DHCP).
+### 1.1.1.2. VMWare Fusion
 
-<img src="./figure2.png" alt="alt text" width="200">
+VMWare Fusion doesn't offer cloning functionality, but you can easily create a copy of VM1:
+- Find VM1's ".vmware" file at `/<User>/Virtual Machines`,
+- Create two copies, name them e.g. "VM2.vmwarevm" and "VM3.vmwarevm";
+- Open VMWare Fusion;
+- Head to the Virtual Machine Library (⌘+⇧+L);
+- Click the `+` button on the top left corner, select `Scan`. The new machines should appear in the VM list;
+    - If this doesn't work, click `File` > `Open` and select the ".vmwarevm" files you created (one at a time);
+
+## 1.1.2. Setting up the network
+
+The intended topology of our network is shown in Figure 2, with VM2 also connected to the Internet (with an IP address obtained via DHCP).
+
+<p align="center">
+    <img src="./figure2.png" alt="alt text" width="200">
+</p>
 
 *Figure 2. Intended network layout. 
-VM1 and VM2 are connected in a virtual network via sw-1. 
-VM2 and VM3 are connected in another virtual network via sw-2. 
+VM1 and VM2 are connected in a virtual network via `sw-1`. 
+VM2 and VM3 are connected in another virtual network via `sw-2`. 
 VM2 will operate as a gateway between the two subnets, and as a gateway to the Internet.*
 
-The easier way to connect the VM1 and VM2 in the same network is to do the following in the VirtualBox interface with the VM turned off:
+### 1.1.2.1 VirtualBox
+
+The easiest way to connect the VM1 and VM2 in the same network is to do the following in the VirtualBox interface with the VM turned off:
 
 - Select the VM Settings/Network/Adapter1
-- Attach to `Internal Network`. Call it sw-1
+- Attach to `Internal Network`. Call it "sw-1"
 - Promiscuous Mode: Allow VMs
 
-Repeat for VM2 and VM3 but creating a second Network adapter in VM2 and calling the `Internal Network` sw-2.
+Repeat for VM2 and VM3 but this time creating a second Network adapter in VM2 and calling the `Internal Network` "sw-2".
 
 Finally, create a third Network adapter in VM2 that is `nat`-ed with your physical address. 
 This interface will be used to access the Internet.
 
 Proceed now to 2.
 
-## 1.2 Setup the lab for rnl-virt
+### 1.1.2.2 VMWare Fusion
+
+For VMWare Fusion, you need to create 2 private networks manually before attaching the adapters to your newly-created VMs.
+- Close VMWare Fusion (easiest way is to click on a VMWare Fusion window and hit ⌘+Q);
+- Edit the following file:
+    ```
+    sudo nano /Library/Preferences/VMware\ Fusion/networking
+    ```
+- Add the following lines to the file:
+    ```plaintext
+    answer VNET_2_HOSTONLY_NETMASK 255.255.255.0
+    answer VNET_2_HOSTONLY_SUBNET 192.168.0.0
+    answer VNET_3_HOSTONLY_NETMASK 255.255.255.0
+    answer VNET_3_HOSTONLY_SUBNET 192.168.1.0
+    ```
+  * You can add them right after the last `answer VNET_1...` line.
+  * Very important: do NOT edit anything else on this file. VMWare reserves `vmnet1` and `vmnet8` for its own use, and you should not change those.
+  * In this topology, `vmnet2` represents `sw-1`, the network between VM1 and VM2, and `vmnet3` represents `sw-2`, the network between VM2 and VM3.
+- Save and exit;
+- Re-open VMWare Fusion and head to the Virtual Machine Library (⌘+⇧+L);
+- Right-click VM1 and select `Settings`:
+  - Click `Add Device` and select `Network Adapter`;
+  - Select `vmvnet2`;
+  - Click `Advanced Options` and hit `Generate` to generate a new MAC address for VM1;
+- Right-click VM2 and select `Settings`:
+  - Click `Add Device` and select `Network Adapter`;
+  - Select `vmvnet2`;
+  - Select `Show All` and select `Network Adapter` once again and to a second adapter, this time selecting `vmvnet3`;
+  - Once again, click `Show All`, `Network Adapter`, and add a third adapter, this time selecting `Share with my Mac`, which is a NAT adapter, allowing VM2 to communicate with the Internet;
+  - Click `Advanced Options` and hit `Generate` to generate a new MAC address for VM2;
+- Right-click VM3 and select `Settings`:
+  - Click `Add Device` and select `Network Adapter`;
+  - Select `vmvnet3`;
+  - Click `Advanced Options` and hit `Generate` to generate a new MAC address for VM3;
+
+If you want to know more about this process or troubleshoot, please refer to [this guide](https://spin.atomicobject.com/2017/04/03/vmware-fusion-custom-virtual-networks/).
+
+## 1.2. Setup the lab for rnl-virt
 
 This guide describes how to use the RNL computers and rnl-virt, the RNL virtualization system. 
 The tool’s documentation is available in [here](https://rnl.tecnico.ulisboa.pt/servicos/virtualizacao/) and should be referenced for additional command details.
@@ -82,7 +141,7 @@ __Your home folder ~/ is not recommended for direct use in work sessions__ becau
 However you can use it to save backups of your virtual disks. 
 You can also save your backups in an external USB drive.
 
-## 1.2.1 Create the virtual networks and machines (rnl-virt)
+## 1.2.1. Create the virtual networks and machines (rnl-virt)
 
 This assignment encompasses the creation of virtual networks, for which three separate virtual machine instances will need to be created, as depicted in Figure 1. 
 Each instance will have a differential disk, based on the original disk. 
@@ -108,11 +167,11 @@ $ rnl-virt switch create sw-2 --hub
 ```
 
 The hub option means that the virtual frames are broadcast in the network. 
-This is important whenever you want a machine in a network to be able to capture the traffic between two other machines of the network, e.g., suppose a VM4 connected to sw-1. 
+This is important whenever you want a machine in a network to be able to capture the traffic between two other machines of the network, e.g., suppose a VM4 connected to `sw-1`. 
 VM4 would be able to capture the traffic between VM1 and VM2.
 If we used normal switches rather than hubs, packets would not be broadcast but rather sent only to their specific destination.
 
-This will have created virtual switches sw-1 and sw-2 (again, these names are suggestions). 
+This will have created virtual switches `sw-1` and `sw-2` (again, these names are suggestions). 
 Now that both the differential disks and the switches exist, we must create the virtual machine instances, associating each one to its target disk file and switch:
 
 ```bash
@@ -146,7 +205,7 @@ $ rnl-virt vm open VM3
 
 If you are asked to login, do it with user `seed` and password `dees` on each virtual machine.
 
-### 1.2.2 Useful shortcuts
+### 1.2.2. Useful shortcuts
 
 ```bash
 * CTRL+ALT     – release mouse.
@@ -164,42 +223,56 @@ $ sudo /sbin/poweroff
 
 We will now configure the machines to the virtual network that connects VM1 to VM2 and the one that connects VM2 and VM3.
 
-### 2.1 Configure the virtual network for VM1 and VM2
+### 2.1. Configure the virtual network for VM1 and VM2
 
-We will now configure the IP network (supported by virtual switch sw-1) with static IP addresses. 
+We will now configure the IP network (supported by virtual switch `sw-1`) with static IP addresses. 
 VM1 and VM2 will talk using a subnet. 
 We will use the private IP addresses 192.168.0.0/24 (meaning that the subnet mask is 255.255.255.0 – we can have 254 addresses to use (from 192.168.0.1 to 192.168.0.254). 
 Note that 192.168.0.255 is reserved for broadcast).
-Figure 3 presents and overview of the desired configuration. 
+Figure 3 presents an overview of the desired configuration. 
 The IP address of VM1 will be 192.168.0.100 and VM2 will be 192.168.0.10. 
 The values ending with 100 and 10 are arbitrary, they could be any (different) value between 1 and 254.
 
-<img src="./figure3.png" alt="alt text" width="300">
+<p align="center">
+    <img src="./figure3.png" alt="alt text" width="300">
+</p>
 
-*Figure 3 Expected layout of the subnet in which VM1 and VM2 will communicate using sw-1.*
+*Figure 3 Expected layout of the subnet in which VM1 and VM2 will communicate using `sw-1`.*
 
 Follow the configuration procedure below for both VM1 and VM2.
 
-We are assuming that VM1 has an interface `enp0s3`(connected to sw-1) and VM2 has interfaces `enp0s3` (connected to sw-1), `enp0s8` (connected to sw-2), and `enp0s9` (connected to the internet). 
-These `en...` values are the network interface names and are automatically assigned by the operating system following a [device naming convention](https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/).
+We are assuming that VM1 has an interface `eth0` (connected to `sw-1`) and VM2 has interfaces `eth0` (connected to `sw-1`), `eth1` (connected to `sw-2`), and `eth2` (connected to the internet). 
+These `eth...` values are the network interface names and are automatically assigned by the operating system, so they may be different in your case.
 
-_How do you know which interface is connected to sw-1 and which one is connected to sw-2? 
+Given this, it's a good idea to take note and map each interface to each switch as you complete the guide.
+- For VM1, the mapping is simple:
+  - `eth0` is connected to `sw-1`
+- For VM3, it's the same case:
+  - `eth0` is connected to `sw-2`
+- For VM2, the mapping is a bit more complex:
+  - `eth0` should be connected to `sw-1`;
+  - `eth1` should be connected to `sw-2`;
+  - `eth2` should be connected to the internet;
+  - But this may not always be the case, so try to switch these around if you're not being successful.
+
+<!-- TODO: This isn't true for VMWare -->
+_How do you know which interface is connected to `sw-1` and which one is connected to `sw-2`? 
 Look at their MAC Addresses. 
 Running `ip a` shows the MAC address of each interface and you can compare with those of VirtualBox._
 
-First, assign an IP address to VM1 on interface enp0s3.
+First, assign an IP address to VM1 on interface `eth0`.
 
 ```bash
-$ sudo ifconfig enp0s3 192.168.0.100/24 up
+$ sudo ifconfig eth0 192.168.0.100/24 up
 ```
 
 And do the same for VM2 (again, note that the interface name may be different)
 
 ```bash
-$ sudo ifconfig enp0s3 192.168.0.10/24 up
+$ sudo ifconfig eth0 192.168.0.10/24 up
 ```
 
-Now running `ifconfig` on the VMs should show the respective assigned IP addresses on interface enp0s3. 
+Now running `ifconfig` on the VMs should show the respective assigned IP addresses on interface `eth0`. 
 If not, try to reload the network interfaces of both VM1 and VM2:
 
 ```bash
@@ -209,8 +282,8 @@ $ sudo systemctl restart NetworkManager
 To check that the configuration is correct:
 
 ```bash
-$ /sbin/ifconfig
-$ /sbin/route
+$ ifconfig
+$ route
 ```
 
 VM2 should now be able to ping VM1:
@@ -225,21 +298,22 @@ And VM1 should be able to ping VM2:
 $ ping 192.168.0.10
 ```
 
-### 2.2 Configure the virtual network for VM2 and VM3
+### 2.2. Configure the virtual network for VM2 and VM3
 
-We will now configure the IP network (supported by virtual switch sw-2) with static IP addresses.
+We will now configure the IP network (supported by virtual switch `sw-2`) with static IP addresses.
 VM2 and VM3 will talk using another subnet. 
 We will use the private IP addresses 192.168.1.0/24.
 Figure 4 presents the intended configuration. 
 The IP address of VM2 will be 192.168.1.254 and the address of VM3 will be 192.168.1.1. 
 Again, 254 and 1 are arbitrary values between 1 and 254.
 
-<img src="./figure4.png" alt="alt text" width="300">
+<p align="center">
+    <img src="./figure4.png" alt="alt text" width="300">
+</p>
 
-*Figure 4 Expected layout of the subnet in which VM2 and VM3 will communicate using sw-2.*
+*Figure 4 Expected layout of the subnet in which VM2 and VM3 will communicate using `sw-2`.*
 
-In VM3, assign the IP address 192.168.1.1 to interface `enp0s3` or `enp0s8`, whichever you have enabled in the VirtualBox VM settings.
-In VM2 assign the IP address 192.168.1.254 to interface `enp0s8` (recall that interface `enp0s3` of VM2 is connected to sw-1 and interface `enp0s8` of VM2 is connected to sw-2).
+In VM3, assign the IP address 192.168.1.1 to interface `eth0`. In VM2 assign the IP address 192.168.1.254 to interface `eth1` (recall that interface `eth0` of VM2 should be connected to `sw-1` and interface `eth1` of VM2 should be connected to `sw-2`).
 The command `ifconfig` should define default routes for those networks. 
 You can check it with command `route`.
 To finish creating this network, reload the network interfaces of both VM2 and VM3:
@@ -251,8 +325,8 @@ $ sudo systemctl restart NetworkManager
 To check that the configuration is correct:
 
 ```bash
-$ /sbin/ifconfig
-$ /sbin/route
+$ ifconfig
+$ route
 ```
 
 VM2 should now be able to ping VM3:
@@ -275,7 +349,7 @@ $ ping 192.168.1.1
 
 It should return `Network is unreachable` because VM1 doesn’t know where to send the packets addressed at network 192.168.1.X.
 
-### 2.3 Configure VM2 as gateway
+### 2.3. Configure VM2 as gateway
 
 Defining a _default gateway_ means that whenever a machine does not have a specific route for a given network, those packets are sent to its default gateway.
 Since VM2 will be the default gateway for VM1, IP forwarding must be enabled in VM2. 
@@ -290,7 +364,7 @@ $ sudo sysctl net.ipv4.ip_forward=1   # on VM2
 Confirm that the flag value was updated to 1:
 
 ```bash
-$ /sbin/sysctl net.ipv4.conf.all.forwarding
+$ sysctl net.ipv4.conf.all.forwarding
 ```
 
 Also, setup forwarding rules in VM2:
@@ -317,10 +391,10 @@ Can you identify where the problem is?
 Run the commands below and see if you understand what is happening
 
 ```bash
-$ sudo tcpdump -i enp0s3   # on VM1
-$ sudo tcpdump -i enp0s3   # on VM2
-$ sudo tcpdump -i enp0s8   # on VM2
-$ sudo tcpdump -i enp0s8   # on VM3
+$ sudo tcpdump -i eth0   # on VM1
+$ sudo tcpdump -i eth0   # on VM2
+$ sudo tcpdump -i eth1   # on VM2
+$ sudo tcpdump -i eth0   # on VM3
 ```
 
 What happens now when you ping VM1 from VM3? Why is the answer different?
@@ -335,7 +409,7 @@ $ sudo ip route add default via 192.168.1.254    # on VM3
 - Can you now ping VM3 from VM1? Why? 
 - And can you ping VM1 from VM3? Why?
 
-### 2.4 Configure NAT (Network Address Translation)
+### 2.4. Configure NAT (Network Address Translation)
 
 Try to ping google.com from the 3 machines? Why can't you do it from VM1 nor VM3? 
 
@@ -343,8 +417,8 @@ The issue is that VM2 is acting as the gateway to the internet for both VM1 and 
 If you run
 
 ```bash
-$ ping 8.8.8.8                    # on VM1
-$ sudo tcpdump -i enp0s9 -p icmp    # on VM2 (interface to the internet)
+$ ping 8.8.8.8                      # on VM1
+$ sudo tcpdump -i eth2 -p icmp    # on VM2 (interface to the internet)
 ```
 
 you can observe that the packets go out to google.com but do not come back. 
@@ -355,14 +429,14 @@ NAT will do the source and destination mapping.
 
 ```bash
 $ sudo iptables -t nat -F            # Flushes all the rules from table NAT
-$ sudo iptables -t nat -A POSTROUTING  -o enp0s9 -j MASQUERADE    # Creates a source NAT on interface enp0s9
+$ sudo iptables -t nat -A POSTROUTING  -o eth2 -j MASQUERADE    # Creates a source NAT on interface eth2
 ```
 
 Test again
 
 ```bash
 $ ping 8.8.8.8                    # on VM1
-$ sudo tcpdump -i enp0s9 -p icmp    # on VM2 (interface to the internet)
+$ sudo tcpdump -i eth2 -p icmp    # on VM2 (interface to the internet)
 ```
 
 - What do you observe? Why does it work now? 
@@ -376,93 +450,81 @@ To remove the default gateway run in VM3
 $ sudo route del default    # on VM3
 ```
 
-- As seen before you cannot ping VM3 from VM1. Could you solve this issue with a NAT (in interface enp0s8 of VM2) instead of adding VM2 as the default gateway for VM3? Why?
+- As seen before you cannot ping VM3 from VM1. Could you solve this issue with a NAT (in interface `eth1` of VM2) instead of adding VM2 as the default gateway for VM3? Why?
 - And can you ping VM1 from VM3? Why?
 
 ## 3. Monitor network traffic
 
-To monitor the network traffic, we may use VM2 (or another machine, e.g. a VM4, also connected to the network) to run tcpdump and capture all network traffic. 
-Make sure you can detect ICMP packets originating at VM3 and with destination VM1 (using ping). Use tcpdump with options -X and -XX and identify the IP addresses, MAC addresses and protocol in a given packet.
-While still running /usr/sbin/tcpdump, open a telnet connection between VM1 and VM2 using user `seed` and password `dees`. 
-Verify that you can capture both the username and password with tcpdump.
+To monitor the network traffic, we may use VM2 (or another machine, e.g. a VM4, also connected to the network) to run `tcpdump` and capture all network traffic. 
+Make sure you can detect ICMP packets originating at VM3 and with destination VM1 (using ping). Use `tcpdump` with options `-X` and `-XX` and identify the IP addresses, MAC addresses and protocol in a given packet.
+While still running `tcpdump`, open a `telnet` connection between VM1 and VM2 using user `kali` and password `kali`. 
+Verify that you can capture both the username and password with `tcpdump`.
 
-**You have successfully eavesdropped communications… But what is the difference between executing telnet from VM1 to VM3 with and without NAT (in interface enp0s8 of VM2)? Use tcpdump to analyse the output and compare the differences.**
+**You have successfully eavesdropped communications… But what is the difference between executing telnet from VM1 to VM3 with and without NAT (in interface `eth1` of VM2)? Use `tcpdump` to analyse the output and compare the differences.**
 
 You might want to run
 
 ```bash
-$ sudo tcpdump -i enp0s3   # on VM1
-$ sudo tcpdump -i enp0s3   # on VM2
-$ sudo tcpdump -i enp0s8   # on VM2
-$ sudo tcpdump -i enp0s8   # on VM3
+$ sudo tcpdump -i eth0   # on VM1
+$ sudo tcpdump -i eth0   # on VM2
+$ sudo tcpdump -i eth1   # on VM2
+$ sudo tcpdump -i eth0   # on VM3
 ```
 
 ## 4. Making these changes permanent
 
 The changes you made before will be lost once you perform a reboot of your machine. 
-In order to make them permanent you have to edit the corresponding `/etc/netplan/01-network-manager-all.yaml`
+In order to make them permanent you have to edit the corresponding `/etc/network/interfaces` file.
 
-```
-## On VM1
-network:
-  version: 2
-  renderer: NetworkManager
-  ethernets:
-      enp0s3:
-          addresses:
-              - 192.168.0.100/24
-          routes:
-              - to: 0.0.0.0/0
-                via: 192.168.0.10
-          nameservers:
-              addresses: [8.8.8.8, 8.8.4.4]
+On VM1:
 
+```plaintext
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo eth0                    # sw-1 interface
+iface lo inet loopback
+
+iface eth0 inet static          # sw-1 interface
+        address 192.168.0.100
+        netmask 255.255.255.0
 ```
 
-```
-### On VM2
-network:
-  version: 2
-  renderer: NetworkManager
-  ethernets:
-      enp0s3:
-          addresses:
-              - 192.168.0.10/24
-          nameservers:
-              addresses: [8.8.8.8, 8.8.4.4]
-      enp0s8:
-          addresses:
-              - 192.168.1.254/24
-          nameservers:
-              addresses: [8.8.8.8, 8.8.4.4]
-      enp0s9:
-          dhcp4: yes
-          nameservers:
-            addresses: [8.8.8.8, 8.8.4.4]
-            
+On VM2:
+```plaintext
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo eth0 eth1               # sw-1 and sw-2 interfaces
+iface lo inet loopback
+
+iface eth0 inet static          # sw-1 interface
+        address 192.168.0.10
+        netmask 255.255.255.0
+
+iface eth1 inet static          # sw-2 interface
+        address 192.168.1.254
+        netmask 255.255.255.0
 
 ```
 
+On VM3:
+```plaintext
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo eth0                    # sw-2 interface
+iface lo inet loopback
+
+iface eth0 inet static          # sw-2 interface
+        address 192.168.1.1
+        netmask 255.255.255.0
 ```
-### On VM3
-network:
-  version: 2
-  renderer: NetworkManager
-  ethernets:
-      enp0s3:    # or enp0s8, if you have it enabled instead
-          addresses:
-              - 192.168.1.1/24
-          routes:
-              - to: 0.0.0.0/0
-                via: 192.168.1.254
-          nameservers:
-              addresses: [8.8.8.8, 8.8.4.4]
-```
+
 After editing the file, in each machine run:
 
 ```bash
-$ sudo netplan try
-$ sudo netplan apply
+$ sudo /etc/init.d/networking restart
 ```
 
 You should also enable IP forwarding permanently on VM2. For that you need to edit `/etc/sysctl.conf` and uncomment the following line
@@ -471,7 +533,7 @@ You should also enable IP forwarding permanently on VM2. For that you need to ed
 net.ipv4.ip_forward=1
 ```
 
-To make the iptables rules persistent, in VM2 install (select "yes" to save the current rules):
+To make the `iptables` rules persistent, in VM2 install (select "yes" to save the current rules):
 
 ```bash
 $ sudo apt install iptables-persistent
@@ -489,7 +551,7 @@ $ sudo sh -c 'ip6tables-save > /etc/iptables/rules.v6'
 To gracefully close the virtual machines which you deployed using the rnl-virt command, execute the following on VM1, VM2 and VM3:
 
 ```bash
-$ sudo /sbin/poweroff
+$ sudo poweroff
 ```
 
 Now, on the host RNL machine, the above command should be enough for the machines to power off and their rnl-virt windows to close automatically. If so, we are done!
