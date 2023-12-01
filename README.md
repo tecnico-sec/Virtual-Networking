@@ -19,7 +19,7 @@ Both have similar options but there are differences.
 When these differences are relevant, we will have separate subsections with letter A and B, respectively.
 Please follow the instructions according to your environment.
 
-If you are unable to use VirtualBox or VMware fusion, then you still have the option of using an earlier version of the VM, at an RNL lab located in the Alameda campus.
+If you are unable to use VirtualBox or VMware Fusion, then you still have the option of using an earlier version of the VM, at an RNL lab located in the Alameda campus.
 If you require this option, please contact faculty for additional `rnl-virt` specific materials.
 
 ## 2. Setup machines and networks
@@ -367,6 +367,17 @@ Why does it work now?
 What is the source address of the packet now?  
 Compare this source address to the previous case.
 
+Can you retry pinging `google.com` from VM1 and VM3? Why can you still not do it, even though pinging 8.8.8.8 works?
+
+What is happening is the domain name `google.com` is not being resolved to an IP address.
+To correct this behavior, we will need to add a DNS server to the configuration of VM1 and VM3.
+
+Edit the file `/etc/resolv.conf` and add the following line (replace any other `nameserver` line that may exist):
+
+```plaintext
+nameserver 8.8.8.8
+```
+
 Let us now go back to the scenario where VM2 is the default gateway for VM1 but where **VM3 has no default gateway**.
 
 To remove the default gateway run in VM3:
@@ -388,6 +399,8 @@ Make sure you can detect ICMP packets originating at VM3 and with destination VM
 Use `tcpdump` with options `-X` and `-XX` and identify the IP addresses, MAC addresses and protocol in a given packet.
 While still running `tcpdump`, open a `telnet` connection between VM1 and VM2 using user `kali` and password `kali` (adjust if different).
 Verify that you can capture both the username and password with `tcpdump`.
+
+Note: If you have trouble using `telnet`, visit the [troubleshooting section](#6.-Troubleshooting).
 
 **You have successfully eavesdropped communications... but what is the difference between executing telnet from VM1 to VM3 with and without NAT (in interface `eth1` of VM2)? Use `tcpdump` to analyse the output and compare the differences.**
 
@@ -480,7 +493,7 @@ $ sudo sh -c 'iptables-save > /etc/iptables/rules.v4'
 $ sudo sh -c 'ip6tables-save > /etc/iptables/rules.v6'
 ```
 
-## 5 Conclusion
+## 5. Conclusion
 
 This lab guide focused on the setup and analysis of virtual computer networks using VirtualBox or VMWare.
 It started by cloning virtual machines.
@@ -488,6 +501,63 @@ Then, it moved to setting up network connections between two groups of machines:
 Next, machine 2 was configured as a gateway for network communication and Internet access using IP forwarding and NAT (Network Address Translation).
 The guide also included monitoring network traffic.
 In the end, it showed how to save these network settings permanently.
+
+## 6. Troubleshooting
+### 6.1. Enable Telnet
+In the Kali Linux image, it may be necessary to enable the `telnet` service. This will allow a machine to act as a `telnet` server. To do this, you can run the following instructions:
+
+First, install the required services:
+```sh
+sudo apt install xinetd telnetd telnet -y
+```
+
+Then, edit the `/etc/xinetd.d/telnet` file with your favorite text editor with superuser privileges (e.g. `sudo nano /etc/xinetd.d/telnet`), and add the following configuration:
+
+```plaintext
+service telnet
+{
+    disable = no
+    flags = REUSE
+    socket_type = stream
+    wait = no
+    user = root
+    server = /usr/sbin/telnetd
+    log_on_failure += USERID
+}
+```
+
+Finally, restart the `xinetd` service:
+
+```sh
+sudo /etc/init.d/xinetd restart
+```
+
+You should now be able to use the machine as a `telnet` server. Test it with the following command, which should open a local `telnet`:
+
+```sh
+telnet localhost
+```
+
+### 6.2. Enable SSH
+To access a machine via SSH, the SSH service must be enabled. To do this, you can run the following instructions:
+
+First, start the SSH service:
+
+```sh
+sudo systemctl start ssh
+```
+
+Then, if you want to enable the SSH service to start automatically on boot, run the following command:
+
+```sh
+sudo systemctl enable ssh
+```
+
+Test it with the following command, which should open a local SSH session:
+
+```sh
+ssh localhost
+```
 
 ----
 
