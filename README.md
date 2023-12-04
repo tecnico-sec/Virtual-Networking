@@ -484,13 +484,22 @@ To make the `iptables` rules persistent, in VM2 install (select "yes" to save th
 $ sudo apt install iptables-persistent
 ```
 
-To save the current rules again, do:
+To save the current rules in a file, do:
 
 ```sh
 # FOR IPv4
 $ sudo sh -c 'iptables-save > /etc/iptables/rules.v4'
 # FOR IPv6
 $ sudo sh -c 'ip6tables-save > /etc/iptables/rules.v6'
+```
+
+Saving the rules in a file allows you to restore them later. After rebooting, you can restore the rules in VM2 with:
+
+```sh
+# FOR IPv4
+$ sudo sh -c 'iptables-restore < /etc/iptables/rules.v4'
+# FOR IPv6
+$ sudo sh -c 'ip6tables-restore < /etc/iptables/rules.v6'
 ```
 
 ## 5. Conclusion
