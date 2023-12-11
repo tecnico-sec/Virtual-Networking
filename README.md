@@ -484,13 +484,19 @@ To make the `iptables` rules persistent, in VM2 install (select "yes" to save th
 $ sudo apt install iptables-persistent
 ```
 
-To save the current rules again, do:
+To save the current `iptables` rules, do:
 
 ```sh
 # FOR IPv4
 $ sudo sh -c 'iptables-save > /etc/iptables/rules.v4'
 # FOR IPv6
 $ sudo sh -c 'ip6tables-save > /etc/iptables/rules.v6'
+```
+
+To automatically apply the saved `iptables` rules on boot, you need to enable the `netfilter-persistent.service`. Run the following command:
+
+```sh
+$ sudo systemctl enable netfilter-persistent.service
 ```
 
 ## 5. Conclusion
