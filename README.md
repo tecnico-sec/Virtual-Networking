@@ -82,6 +82,8 @@ To connect VM1 and VM2 in the same network is to do the following in the Virtual
 - Attach to `Internal Network`. Call it "sw-1"
 - Promiscuous Mode: Allow VMs
 
+Note that if you are using VirtualBox version >= 7.1.0, make sure you select the `Expert` column in the VM settings to view all network adapters.
+
 Repeat for VM2 and VM3 but this time creating a second Network adapter in VM2 and calling the `Internal Network` "sw-2".
 
 Finally, create a third network adapter in VM2 that is `nat`-ed with your physical address.
