@@ -82,6 +82,8 @@ To connect VM1 and VM2 in the same network is to do the following in the Virtual
 - Attach to `Internal Network`. Call it "sw-1"
 - Promiscuous Mode: Allow VMs
 
+Note that if you are using VirtualBox version >= 7.1.0, make sure you select the `Expert` column in the VM settings to view all network adapters.
+
 Repeat for VM2 and VM3 but this time creating a second Network adapter in VM2 and calling the `Internal Network` "sw-2".
 
 Finally, create a third network adapter in VM2 that is `nat`-ed with your physical address.
@@ -472,11 +474,13 @@ iface eth0 inet static
 ```
 
 You should also enable IP forwarding permanently on VM2.
-For that you need to edit `/etc/sysctl.conf` and uncomment the following line:
+For that you need to edit `/etc/sysctl.conf` and uncomment or add the following line:
 
 ```plaintext
 net.ipv4.ip_forward=1
 ```
+
+Apply this change to any other files in `/etc/sysctl.d/` that may be imported in the previous `/etc/sysctl.conf` file.
 
 To make the `iptables` rules persistent, in VM2 install (select "yes" to save the current rules):
 
@@ -536,6 +540,12 @@ Finally, restart the `xinetd` service:
 
 ```sh
 sudo /etc/init.d/xinetd restart
+```
+
+If you want to enable `xinetd` to start automatically on boot along with `telnet`, run the following command:
+
+```sh
+sudo systemctl enable xinetd
 ```
 
 You should now be able to use the machine as a `telnet` server. Test it with the following command, which should open a local `telnet`:
