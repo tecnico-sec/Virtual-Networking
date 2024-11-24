@@ -188,7 +188,8 @@ Now running `ifconfig` on the VMs should show the respective assigned IP address
 If not, try to reload the network interfaces of both VM1 and VM2:
 
 ```sh
-$ sudo systemctl restart NetworkManager
+$ sudo systemctl enable NetworkManager
+$ sudo systemctl start NetworkManager
 ```
 
 To check that the configuration is correct:
