@@ -188,6 +188,7 @@ Now running `ifconfig` on the VMs should show the respective assigned IP address
 If not, try to reload the network interfaces of both VM1 and VM2:
 
 ```sh
+$ sudo systemctl restart NetworkManager
 $ sudo systemctl enable NetworkManager
 $ sudo systemctl start NetworkManager
 ```
@@ -234,6 +235,8 @@ To finish creating this network, reload the network interfaces of both VM2 and V
 
 ```sh
 $ sudo systemctl restart NetworkManager
+$ sudo systemctl enable NetworkManager
+$ sudo systemctl start NetworkManager
 ```
 
 To check that the configuration is correct:
@@ -313,8 +316,8 @@ $ sudo tcpdump -i eth0   # on VM3
 What happens now when you ping VM1 from VM3?  
 Why is the answer different?
 
-Add now VM2 also as the default gateway for VM3.
-This would allow VM3 to talk to machines outside its subnet `192.168.1.X`.
+Add now set VM2 also as the default gateway for VM3.
+This will allow VM3 to talk to machines outside its subnet `192.168.1.X`.
 
 ```sh
 $ sudo ip route add default via 192.168.1.254    # on VM3
