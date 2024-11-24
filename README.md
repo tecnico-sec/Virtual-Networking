@@ -486,7 +486,7 @@ net.ipv4.ip_forward=1
 
 Apply this change to any other files in `/etc/sysctl.d/` that may be imported in the previous `/etc/sysctl.conf` file.
 
-To make the `iptables` rules persistent, in VM2 install (select "yes" to save the current rules):
+To make the `iptables` rules persistent, in VM2 install `iptables-persistent` (select "yes" to save the current rules):
 
 ```sh
 $ sudo apt install iptables-persistent
