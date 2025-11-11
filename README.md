@@ -51,15 +51,13 @@ Repeat this process twice and call the machines `VM2` and `VM3`.
 
 ### 2.1.B VMWare Fusion
 
-VMWare Fusion does not offer cloning functionality, but you can easily create a copy of VM1:
+If you decide to clone the existing machine you should:
 
-- Find the `.vmware` file for VM1 at `/<User>/Virtual Machines`,
-- Create two copies, name them e.g. `VM2.vmwarevm` and `VM3.vmwarevm`;
-- Open VMWare Fusion;
-- Head to the Virtual Machine Library (⌘+⇧+L);
-- Click the `+` button on the top left corner, select `Scan`.
-The new machines should appear in the VM list;
-  - If this does not work, click `File` > `Open` and select the ".vmwarevm" files you created (one at a time);
+- Shutdown the virtual machine you want to clone (shutdown, not suspend).
+- Open VMWare Fusion and right click on the machine you want to clone.
+- Select create linked clone (uses less space)
+- Store it at `/<User>/Virtual Machines` (default).
+
 
 ## 2.2. Set up the networks
 
