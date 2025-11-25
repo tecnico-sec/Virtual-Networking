@@ -120,7 +120,7 @@ For VMWare Fusion, you need to create two private networks manually before attac
 - Right-click VM2 and select `Settings`:
   - Click `Add Device` and select `Network Adapter`;
   - Select `vmvnet2`;
-  - Select `Show All` and select `Network Adapter` once again and to a second adapter, this time selecting `vmvnet3`;
+  - Select `Show All` and select `Network Adapter` once again add a second adapter, this time selecting `vmvnet3`;
   - Once again, click `Show All`, `Network Adapter`, and add a third adapter, this time selecting `Share with my Mac`, which is a NAT adapter, allowing VM2 to communicate with the Internet;
   - Click `Advanced Options` and hit `Generate` to generate a new MAC address for VM2;
 - Right-click VM3 and select `Settings`:
