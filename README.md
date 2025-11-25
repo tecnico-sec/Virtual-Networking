@@ -314,7 +314,7 @@ $ sudo tcpdump -i eth0   # on VM3
 What happens now when you ping VM1 from VM3?  
 Why is the answer different?
 
-Add now set VM2 also as the default gateway for VM3.
+Now set VM2 also as the default gateway for VM3.
 This will allow VM3 to talk to machines outside its subnet `192.168.1.X`.
 
 ```sh
@@ -330,7 +330,7 @@ Why?
 ## 2.5. Configure NAT (Network Address Translation)
 
 Try to ping `google.com` from the three machines?
-Why can not you do it from VM1 nor VM3?
+Why can you not do it from VM1 nor VM3?
 
 The issue is that VM2 is acting as the gateway to the Internet for both VM1 and VM3 but is not NATing the packets.
 If you run:
