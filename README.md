@@ -401,7 +401,7 @@ Why?
 To monitor the network traffic, we may use VM2 (or another machine, e.g. a VM4, also connected to the network) to run `tcpdump` and capture all network traffic.
 Make sure you can detect ICMP packets originating at VM3 and with destination VM1 (using the `ping` command).
 Use `tcpdump` with options `-X` and `-XX` and identify the IP addresses, MAC addresses and protocol in a given packet.
-While still running `tcpdump`, open a `telnet` connection between VM1 and VM2 using user `kali` and password `kali` (adjust if different).
+While still running `tcpdump`, open a `telnet` connection between VM1 and VM3 using user `kali` and password `kali` (adjust if different).
 Verify that you can capture both the username and password with `tcpdump`.
 
 Note: If you have trouble using `telnet`, visit the [troubleshooting section](#6.-Troubleshooting).
@@ -520,6 +520,7 @@ In the Kali Linux image, it may be necessary to enable the `telnet` service. Thi
 
 First, install the required services:
 ```sh
+sudo apt-get update
 sudo apt install xinetd telnetd telnet -y
 ```
 
