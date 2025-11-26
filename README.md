@@ -487,6 +487,7 @@ Apply this change to any other files in `/etc/sysctl.d/` that may be imported in
 To make the `iptables` rules persistent, in VM2 install `iptables-persistent` (select "yes" to save the current rules):
 
 ```sh
+$ sudo apt update
 $ sudo apt install iptables-persistent
 ```
 
@@ -520,7 +521,7 @@ In the Kali Linux image, it may be necessary to enable the `telnet` service. Thi
 
 First, install the required services:
 ```sh
-sudo apt-get update
+sudo apt update
 sudo apt install xinetd telnetd telnet -y
 ```
 
