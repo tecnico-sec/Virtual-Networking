@@ -36,6 +36,30 @@ We will clone (copy) the existing machine `VM1`.
 
 Alternatively, you can [install two new machines from scratch](https://github.com/tecnico-sec/Setup/), but this will take longer and is not recommended.
 
+
+
+
+### Before cloning
+
+Before cloning VM1, install and configure the Telnet packages required for the laboratory exercises.
+
+Run the following commands on VM1 to update the package lists and install the Telnet client and server:
+
+
+```bash
+sudo apt update
+sudo apt install inetutils-telnet inetutils-telnetd inetutils-inetd
+sudo update-inetd --enable telnet
+sudo systemctl enable inetutils-inetd
+sudo systemctl restart inetutils-inetd
+```
+
+Once this preparation is complete, shut down VM1 and proceed with cloning:
+
+
+
+
+
 ## 2.1. Clone virtual machines
 
 ### 2.1.A VirtualBox
@@ -86,6 +110,14 @@ Repeat for VM2 and VM3 but this time creating a second Network adapter in VM2 an
 
 Finally, create a third network adapter in VM2 that is `nat`-ed with your physical address.
 This interface will be used to access the Internet.
+
+| Machine | Adapter | Attached to | Name | Promiscuous Mode |
+|---|---|---|---|---|
+| **VM1** | Adapter 1 | Internal Network | `sw-1` | Allow VMs |
+| **VM2** | Adapter 1 | Internal Network | `sw-1` | Allow VMs |
+| **VM2** | Adapter 2 | Internal Network | `sw-2` | Allow VMs |
+| **VM2** | Adapter 3 | NAT | — | Leave the default value |
+| **VM3** | Adapter 1 | Internal Network | `sw-2` | Allow VMs |
 
 ### 2.2.B VMWare Fusion
 
