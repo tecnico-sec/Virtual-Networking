@@ -48,10 +48,9 @@ Run the following commands on VM1 to update the package lists and install the Te
 
 ```bash
 sudo apt update
-sudo apt install inetutils-telnet inetutils-telnetd inetutils-inetd
+sudo apt install inetutils-telnet inetutils-telnetd inetutils-inetd ufw fwbuilder
 sudo update-inetd --enable telnet
-sudo systemctl enable inetutils-inetd
-sudo systemctl restart inetutils-inetd
+
 ```
 
 Once this preparation is complete, shut down VM1 and proceed with cloning.
