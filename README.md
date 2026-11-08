@@ -54,7 +54,7 @@ sudo systemctl enable inetutils-inetd
 sudo systemctl restart inetutils-inetd
 ```
 
-Once this preparation is complete, shut down VM1 and proceed with cloning:
+Once this preparation is complete, shut down VM1 and proceed with cloning.
 
 
 
