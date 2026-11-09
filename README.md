@@ -40,17 +40,17 @@ Alternatively, you can [install two new machines from scratch](https://github.co
 
 ### Before cloning
 
-Before cloning VM1, install the packages required for the following laboratory exercises.
+Before cloning VM1, you should also install additional packages that will be useful in other laboratory guides
 
 
-Install the Telnet client and server, the xinetd service manager, and packit for traffic analysis and packet injection:
+Install the Telnet client and server, the xinetd service manager, and packit for later traffic analysis and packet injection:
 
 ```bash
 sudo apt update
 sudo apt install xinetd telnetd telnet packit -y
 ```
 
-Install UFW and Firewall Builder to configure firewall rules and implement network access control:
+Install UFW and Firewall Builder to later configure firewall rules and implement network access control:
 
 ```bash
 sudo apt install ufw fwbuilder -y
