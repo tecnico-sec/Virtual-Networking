@@ -38,21 +38,25 @@ Alternatively, you can [install two new machines from scratch](https://github.co
 
 
 
-
 ### Before cloning
 
-Before cloning VM1, install and configure the Telnet packages required for the laboratory exercises.
+Before cloning VM1, install the packages required for the following laboratory exercises.
 
-Run the following commands on VM1 to update the package lists and install the Telnet client and server:
 
+Install the Telnet client and server, the xinetd service manager, and packit for traffic analysis and packet injection:
 
 ```bash
 sudo apt update
-sudo apt install xinetd telnetd telnet ufw fwbuilder -y
+sudo apt install xinetd telnetd telnet packit -y
 ```
 
-Once this preparation is complete, shut down VM1 and proceed with cloning.
+Install UFW and Firewall Builder to configure firewall rules and implement network access control:
 
+```bash
+sudo apt install ufw fwbuilder -y
+```
+
+Once installation is complete, shut down VM1 and proceed with cloning.
 
 
 
@@ -69,6 +73,8 @@ If you decide to clone the existing machine you should:
 - Select `Linked Clone`
 
 Repeat this process twice and call the machines `VM2` and `VM3`.
+
+A linked clone shares the original VM's base disk and stores its own changes separately. We recommend this option because it uses less disk space than a full clone.
 
 ### 2.1.B VMWare Fusion
 
