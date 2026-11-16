@@ -467,6 +467,7 @@ auto lo eth0
 iface lo inet loopback
 
 # sw-1 interface
+auto eth0
 iface eth0 inet static          
         address 192.168.0.100
         netmask 255.255.255.0
@@ -483,11 +484,13 @@ auto lo eth0 eth1
 iface lo inet loopback
 
 # sw-1 interface
+auto eth0
 iface eth0 inet static         
         address 192.168.0.10
         netmask 255.255.255.0
 
 # sw-2 interface
+auto eth1
 iface eth1 inet static          
         address 192.168.1.254
         netmask 255.255.255.0
@@ -504,6 +507,7 @@ auto lo eth0
 iface lo inet loopback
 
 # sw-2 interface
+auto eth0
 iface eth0 inet static          
         address 192.168.1.1
         netmask 255.255.255.0
