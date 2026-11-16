@@ -521,6 +521,12 @@ For that you need to edit `/etc/sysctl.conf` and uncomment or add the following 
 net.ipv4.ip_forward=1
 ```
 
+recent Kali (based on Debian testing) may not read /etc/sysctl.conf at boot anymore, because systemd only loads files in /etc/sysctl.d/. To make sure the setting survives a reboot, put it there:
+
+```plaintext
+echo "net.ipv4.ip_forward=1" | sudo tee /etc/sysctl.d/99-ip-forward.conf
+```
+
 Apply this change to any other files in `/etc/sysctl.d/` that may be imported in the previous `/etc/sysctl.conf` file.
 
 To make the `iptables` rules persistent, in VM2 install `iptables-persistent` (select "yes" to save current rules):
